@@ -129,14 +129,14 @@ async function getLanguagesAndFrameworks(maxLangs = 5, maxItems = 8) {
 }
 
 function buildToolboxSvg(items) {
-  const baseY = 78;
-  const rowGap = 15;
+  const baseY = 82;
+  const rowGap = 13;
 
   const rowsSvg = items
     .map((item, idx) => {
       const y = baseY + idx * rowGap;
-      const dotX = 40;
-      const nameX = 60;
+      const dotX = 34;
+      const nameX = 50;
       const glowId = `itemGlow${idx}`;
       const color =
         item.kind === "lang"
@@ -160,7 +160,7 @@ function buildToolboxSvg(items) {
           font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
           font-size="13"
           font-weight="500"
-          fill="#e8ecf2">
+          fill="#cdd6f4">
       ${item.label}
     </text>`;
     })
@@ -169,28 +169,29 @@ function buildToolboxSvg(items) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="520" height="190" viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
   <defs>
+    <!-- stesso stile Catppuccin della stats card -->
     <linearGradient id="bgGradientToolbox" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#05040a"/>
-      <stop offset="40%" stop-color="#0b0f1f"/>
-      <stop offset="100%" stop-color="#020309"/>
+      <stop offset="0%" stop-color="#181825"/>
+      <stop offset="45%" stop-color="#1e1e2e"/>
+      <stop offset="100%" stop-color="#313244"/>
     </linearGradient>
 
     <linearGradient id="borderGradientToolbox" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ff1133"/>
-      <stop offset="50%" stop-color="#ff3355"/>
-      <stop offset="100%" stop-color="#ff1133"/>
+      <stop offset="0%" stop-color="#fab387"/>
+      <stop offset="50%" stop-color="#f9e2af"/>
+      <stop offset="100%" stop-color="#fab387"/>
     </linearGradient>
 
-    <filter id="outerGlowToolbox" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#ff1133" flood-opacity="0.75"/>
-      <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#a1003b" flood-opacity="0.75"/>
+    <filter id="softShadowToolbox" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10"
+                    flood-color="#000000" flood-opacity="0.45"/>
     </filter>
 
-    <linearGradient id="vignetteToolbox" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff1133" stop-opacity="0.18"/>
-      <stop offset="40%" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#35c0ff" stop-opacity="0.18"/>
-    </linearGradient>
+    <radialGradient id="coffeeGlowToolbox" cx="30%" cy="0%" r="90%">
+      <stop offset="0%" stop-color="#f5e0dc" stop-opacity="0.28"/>
+      <stop offset="45%" stop-color="#f5e0dc" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
 
     <filter id="noiseToolbox">
       <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" stitchTiles="noStitch"/>
@@ -198,37 +199,39 @@ function buildToolboxSvg(items) {
         values="0 0 0 0 0
                 0 0 0 0 0
                 0 0 0 0 0
-                0 0 0 .32 0"/>
+                0 0 0 .22 0"/>
     </filter>
   </defs>
 
   <!-- card -->
-  <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
+  <rect x="10" y="10" rx="20" ry="20" width="500" height="170"
         fill="url(#bgGradientToolbox)"
         stroke="url(#borderGradientToolbox)"
-        stroke-width="2"
-        filter="url(#outerGlowToolbox)"/>
+        stroke-width="1.5"
+        filter="url(#softShadowToolbox)"/>
 
-  <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
-        fill="url(#vignetteToolbox)" />
-  <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
-        filter="url(#noiseToolbox)" opacity="0.35"/>
+  <!-- glow chiaro + leggero noise -->
+  <rect x="10" y="10" rx="20" ry="20" width="500" height="170"
+        fill="url(#coffeeGlowToolbox)" />
+  <rect x="10" y="10" rx="20" ry="20" width="500" height="170"
+        filter="url(#noiseToolbox)" opacity="0.25"/>
 
-  <!-- titolo -->
-  <text x="30" y="48"
-        font-family="Georgia, 'Times New Roman', Times, serif"
-        font-size="18"
-        font-weight="700"
-        letter-spacing="5"
-        fill="#ff3355">
+  <!-- titolo toolbox in stile stats -->
+  <text x="26" y="50"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-size="16"
+        font-weight="600"
+        letter-spacing="2"
+        fill="#f9e2af">
     Hawkins Toolbox
   </text>
 
-  <line x1="30" y1="56" x2="360" y2="56" stroke="#25293a" stroke-width="1"/>
+  <line x1="26" y1="58" x2="260" y2="58" stroke="#45475a" stroke-width="1"/>
 
   ${rowsSvg}
 </svg>`;
 }
+
 
 async function main() {
   console.log(`Generating toolbox for ${username}...`);
