@@ -27,6 +27,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USERNAME: its-me-mayday
           GITHUB_DISPLAY_NAME: "Luca Maggio"
+      
+      - name: Generate toolbox card
+        run: node scripts/generate-toolbox.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USERNAME: its-me-mayday
 
       - name: Commit updated card
         uses: stefanzweifel/git-auto-commit-action@v5
