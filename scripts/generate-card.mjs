@@ -61,7 +61,6 @@ async function getCommitsLastYear() {
 }
 
 function computeGrade(commits) {
-  // Cambiala come vuoi, per ora giusto un giochetto
   if (commits >= 1000) return "A+";
   if (commits >= 700) return "A";
   if (commits >= 400) return "B+";
@@ -74,150 +73,144 @@ function buildSvg({ stars, commits, issues, grade }) {
     return `<?xml version="1.0" encoding="UTF-8"?>
   <svg width="520" height="190" viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
     <defs>
+      <!-- Catppuccin Mocha, versione più chiara -->
       <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stop-color="#05040a"/>
-        <stop offset="40%" stop-color="#0b0f1f"/>
-        <stop offset="100%" stop-color="#020309"/>
+        <stop offset="0%" stop-color="#181825"/>
+        <stop offset="45%" stop-color="#1e1e2e"/>
+        <stop offset="100%" stop-color="#313244"/>
       </linearGradient>
   
+      <!-- bordo caldo -->
       <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#ff1133"/>
-        <stop offset="50%" stop-color="#ff3355"/>
-        <stop offset="100%" stop-color="#ff1133"/>
+        <stop offset="0%" stop-color="#fab387"/>
+        <stop offset="50%" stop-color="#f9e2af"/>
+        <stop offset="100%" stop-color="#fab387"/>
       </linearGradient>
   
-      <filter id="outerGlow" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#ff1133" flood-opacity="0.75"/>
-        <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#a1003b" flood-opacity="0.75"/>
+      <!-- ombra soft -->
+      <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="6" stdDeviation="10"
+                      flood-color="#000000" flood-opacity="0.45"/>
       </filter>
   
-      <filter id="noiseFilter">
-        <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" stitchTiles="noStitch"/>
-        <feColorMatrix type="matrix"
-          values="0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 0 0
-                  0 0 0 .30 0"/>
-      </filter>
-  
-      <radialGradient id="innerCircle" cx="50%" cy="35%" r="70%">
-        <stop offset="0%" stop-color="#141828"/>
-        <stop offset="100%" stop-color="#020309"/>
+      <!-- highlight “coffee” centrale -->
+      <radialGradient id="coffeeGlow" cx="30%" cy="0%" r="90%">
+        <stop offset="0%" stop-color="#f5e0dc" stop-opacity="0.28"/>
+        <stop offset="45%" stop-color="#f5e0dc" stop-opacity="0.05"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
       </radialGradient>
   
+      <!-- cerchio interno del grade -->
+      <radialGradient id="innerCircle" cx="50%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#1e1e2e"/>
+        <stop offset="100%" stop-color="#11111b"/>
+      </radialGradient>
+  
+      <!-- anello grade -->
       <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-        <stop offset="0%" stop-color="#ff1133"/>
-        <stop offset="45%" stop-color="#ff3355"/>
-        <stop offset="100%" stop-color="#35c0ff"/>
+        <stop offset="0%" stop-color="#f38ba8"/>
+        <stop offset="33%" stop-color="#fab387"/>
+        <stop offset="66%" stop-color="#cba6f7"/>
+        <stop offset="100%" stop-color="#89b4fa"/>
       </linearGradient>
     </defs>
   
-    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
+    <!-- card -->
+    <rect x="10" y="10" rx="20" ry="20" width="500" height="170"
           fill="url(#bgGradient)"
           stroke="url(#borderGradient)"
-          stroke-width="2"
-          filter="url(#outerGlow)"/>
+          stroke-width="1.5"
+          filter="url(#softShadow)"/>
   
-    <linearGradient id="vignetteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ff1133" stop-opacity="0.24"/>
-      <stop offset="40%" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#35c0ff" stop-opacity="0.24"/>
-    </linearGradient>
-    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
-          fill="url(#vignetteGrad)" />
+    <!-- glow chiaro -->
+    <rect x="10" y="10" rx="20" ry="20" width="500" height="170"
+          fill="url(#coffeeGlow)" />
   
-    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
-          filter="url(#noiseFilter)" opacity="0.40"/>
-  
-    <text x="30" y="48"
-          font-family="Georgia, 'Times New Roman', Times, serif"
-          font-size="18"
-          font-weight="700"
-          letter-spacing="5"
-          text-rendering="geometricPrecision"
-          fill="#ff3355">
+    <!-- TITOLO: sans, più compatto, più lontano dal grade -->
+    <text x="26" y="50"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="16"
+          font-weight="600"
+          letter-spacing="2"
+          fill="#f9e2af">
       ${displayName}'s GitHub Stats
     </text>
   
-    <line x1="30" y1="56" x2="340" y2="56" stroke="#25293a" stroke-width="1"/>
+    <!-- linea separatrice -->
+    <line x1="26" y1="58" x2="330" y2="58" stroke="#45475a" stroke-width="1"/>
   
-    <text x="38" y="88"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          font-size="16"
-          fill="#ffdf5d">★</text>
-    <text x="68" y="88"
+    <!-- STATS -->
+    <!-- Stars -->
+    <circle cx="34" cy="90" r="7" fill="#f9e2af"/>
+    <text x="50" y="94"
           font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
           font-size="13"
-          font-weight="500"
-          fill="#98a3b3">
+          fill="#a6adc8">
       Total Stars Earned:
     </text>
-    <text x="305" y="88"
+    <text x="300" y="94"
           text-anchor="end"
           font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
           font-size="14"
           font-weight="600"
-          fill="#e8ecf2">
+          fill="#cdd6f4">
       ${stars}
     </text>
   
-    <text x="38" y="118"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          font-size="16"
-          fill="#35c0ff">🕒</text>
-    <text x="68" y="118"
+    <!-- Commits -->
+    <circle cx="34" cy="122" r="7" fill="#89b4fa"/>
+    <text x="50" y="126"
           font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
           font-size="13"
-          font-weight="500"
-          fill="#98a3b3">
+          fill="#a6adc8">
       Total Commits (last year):
     </text>
-    <text x="305" y="118"
+    <text x="300" y="126"
           text-anchor="end"
           font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
           font-size="14"
           font-weight="600"
-          fill="#e8ecf2">
+          fill="#cdd6f4">
       ${commits}
     </text>
   
-    <!-- issues -->
-    <text x="38" y="148"
-          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          font-size="16"
-          fill="#ff3355">!</text>
-    <text x="68" y="148"
+    <!-- Issues -->
+    <circle cx="34" cy="154" r="7" fill="#f38ba8"/>
+    <text x="50" y="158"
           font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
           font-size="13"
-          font-weight="500"
-          fill="#98a3b3">
+          fill="#a6adc8">
       Total Issues:
     </text>
-    <text x="305" y="148"
+    <text x="300" y="158"
           text-anchor="end"
           font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
           font-size="14"
           font-weight="600"
-          fill="#e8ecf2">
+          fill="#cdd6f4">
       ${issues}
     </text>
   
-    <g transform="translate(410, 102)">
-      <circle cx="0" cy="0" r="60" fill="#ff1133" opacity="0.09"/>
-      <circle cx="0" cy="0" r="50" fill="none" stroke="url(#ringGradient)" stroke-width="9"/>
-      <circle cx="0" cy="0" r="36" fill="url(#innerCircle)" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+    <!-- GRADE: spostato più a destra e un filo più piccolo -->
+    <g transform="translate(430, 104)">
+      <circle cx="0" cy="0" r="54" fill="#f5e0dc" opacity="0.13"/>
+      <circle cx="0" cy="0" r="46" fill="none" stroke="url(#ringGradient)" stroke-width="8"/>
+      <circle cx="0" cy="0" r="32" fill="url(#innerCircle)" stroke="#313244" stroke-width="1"/>
+  
       <text x="0" y="6"
             text-anchor="middle"
-            font-family="Georgia, 'Times New Roman', Times, serif"
-            font-size="26"
+            font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+            font-size="22"
             font-weight="700"
-            letter-spacing="5"
-            fill="#f5f7ff">
+            letter-spacing="2"
+            fill="#cdd6f4">
         ${grade}
       </text>
     </g>
   </svg>`;
-  }  
+  }
+  
+  
   
 async function main() {
   console.log(`Generating stats for ${username}...`);
