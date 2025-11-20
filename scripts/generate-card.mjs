@@ -71,111 +71,165 @@ function computeGrade(commits) {
 }
 
 function buildSvg({ stars, commits, issues, grade }) {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="520" height="190" viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a0b10"/>
-      <stop offset="50%" stop-color="#0f1220"/>
-      <stop offset="100%" stop-color="#05060a"/>
+    return `<?xml version="1.0" encoding="UTF-8"?>
+  <svg width="520" height="190" viewBox="0 0 520 190" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- SFONDO HAWKINS -->
+      <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#05040a"/>
+        <stop offset="40%" stop-color="#0b0f1f"/>
+        <stop offset="100%" stop-color="#020309"/>
+      </linearGradient>
+  
+      <!-- bordo neon rosso -->
+      <linearGradient id="borderGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff1133"/>
+        <stop offset="50%" stop-color="#ff3355"/>
+        <stop offset="100%" stop-color="#ff1133"/>
+      </linearGradient>
+  
+      <!-- glow esterno -->
+      <filter id="outerGlow" x="-40%" y="-40%" width="180%" height="180%">
+        <feDropShadow dx="0" dy="0" stdDeviation="9" flood-color="#ff1133" flood-opacity="0.75"/>
+        <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#a1003b" flood-opacity="0.75"/>
+      </filter>
+  
+      <!-- leggero noise "stranger" -->
+      <filter id="noiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="1.2" numOctaves="3" stitchTiles="noStitch"/>
+        <feColorMatrix type="matrix"
+          values="0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 0 0
+                  0 0 0 .35 0"/>
+      </filter>
+  
+      <!-- cerchio interno del grade -->
+      <radialGradient id="innerCircle" cx="50%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#141828"/>
+        <stop offset="100%" stop-color="#020309"/>
+      </radialGradient>
+  
+      <!-- anello neon del grade -->
+      <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff1133"/>
+        <stop offset="45%" stop-color="#ff3355"/>
+        <stop offset="100%" stop-color="#35c0ff"/>
+      </linearGradient>
+    </defs>
+  
+    <!-- sfondo con bordo neon -->
+    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
+          fill="url(#bgGradient)"
+          stroke="url(#borderGradient)"
+          stroke-width="2"
+          filter="url(#outerGlow)"/>
+  
+    <!-- vignetta diagonale (rosso in alto, blu in basso) -->
+    <linearGradient id="vignetteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff1133" stop-opacity="0.24"/>
+      <stop offset="40%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#35c0ff" stop-opacity="0.24"/>
     </linearGradient>
-
-    <filter id="shadowGlow" x="-40%" y="-40%" width="180%" height="180%">
-      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ff1133" flood-opacity="0.75"/>
-    </filter>
-
-    <radialGradient id="innerCircle" cx="50%" cy="35%" r="70%">
-      <stop offset="0%" stop-color="#1b1f2e"/>
-      <stop offset="100%" stop-color="#05060a"/>
-    </radialGradient>
-
-    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ff1133"/>
-      <stop offset="50%" stop-color="#ff3355"/>
-      <stop offset="100%" stop-color="#a1003b"/>
-    </linearGradient>
-  </defs>
-
-  <rect x="6" y="6" rx="16" ry="16" width="508" height="178"
-        fill="url(#bgGradient)"
-        stroke="#ff1133"
-        stroke-width="1.5"
-        filter="url(#shadowGlow)"/>
-
-  <text x="26" y="42"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="16"
-        letter-spacing="3"
-        fill="#ff3355">
-    ${displayName}'s GitHub Stats
-  </text>
-
-  <line x1="26" y1="52" x2="320" y2="52" stroke="#25293a" stroke-width="1"/>
-
-  <text x="32" y="82"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="14"
-        fill="#ffdf5d">★</text>
-  <text x="60" y="82"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#98a3b3">
-    Total Stars Earned:
-  </text>
-  <text x="240" y="82"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#e8ecf2">
-    ${stars}
-  </text>
-
-  <text x="32" y="112"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="14"
-        fill="#35c0ff">⏱</text>
-  <text x="60" y="112"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#98a3b3">
-    Total Commits (last year):
-  </text>
-  <text x="260" y="112"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#e8ecf2">
-    ${commits}
-  </text>
-
-  <text x="32" y="142"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="14"
-        fill="#ff3355">!</text>
-  <text x="60" y="142"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#98a3b3">
-    Total Issues:
-  </text>
-  <text x="240" y="142"
-        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-        font-size="13"
-        fill="#e8ecf2">
-    ${issues}
-  </text>
-
-  <g transform="translate(360, 45)">
-    <circle cx="0" cy="0" r="52" fill="none" stroke="url(#ringGradient)" stroke-width="10"/>
-    <circle cx="0" cy="0" r="36" fill="url(#innerCircle)" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
-    <text x="-18" y="7"
+    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
+          fill="url(#vignetteGrad)" />
+  
+    <!-- leggero noise sopra -->
+    <rect x="8" y="8" rx="22" ry="22" width="504" height="174"
+          filter="url(#noiseFilter)" opacity="0.40"/>
+  
+    <!-- TITOLO ST STYLE -->
+    <text x="30" y="48"
           font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-          font-size="24"
-          letter-spacing="3"
-          fill="#e8ecf2">
-      ${grade}
+          font-size="17"
+          letter-spacing="4"
+          text-rendering="geometricPrecision"
+          fill="#ff3355">
+      ${displayName}'s GitHub Stats
     </text>
-  </g>
-</svg>`;
-}
+  
+    <!-- linea separatrice -->
+    <line x1="30" y1="56" x2="340" y2="56" stroke="#25293a" stroke-width="1"/>
+  
+    <!-- COLONNA METRICHE -->
+    <!-- stelle -->
+    <text x="38" y="88"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="16"
+          fill="#ffdf5d">★</text>
+    <text x="68" y="88"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="13"
+          fill="#98a3b3">
+      Total Stars Earned:
+    </text>
+    <text x="305" y="88"
+          text-anchor="end"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="14"
+          fill="#e8ecf2">
+      ${stars}
+    </text>
+  
+    <!-- commits -->
+    <text x="38" y="118"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="16"
+          fill="#35c0ff">🕒</text>
+    <text x="68" y="118"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="13"
+          fill="#98a3b3">
+      Total Commits (last year):
+    </text>
+    <text x="305" y="118"
+          text-anchor="end"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="14"
+          fill="#e8ecf2">
+      ${commits}
+    </text>
+  
+    <!-- issues -->
+    <text x="38" y="148"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="16"
+          fill="#ff3355">!</text>
+    <text x="68" y="148"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="13"
+          fill="#98a3b3">
+      Total Issues:
+    </text>
+    <text x="305" y="148"
+          text-anchor="end"
+          font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="14"
+          fill="#e8ecf2">
+      ${issues}
+    </text>
+  
+    <!-- CERCHIO GRADE A DESTRA, BEN DENTRO LA CARD -->
+    <g transform="translate(410, 102)">
+      <!-- alone soft dietro -->
+      <circle cx="0" cy="0" r="60" fill="#ff1133" opacity="0.09"/>
+      <!-- anello neon -->
+      <circle cx="0" cy="0" r="50" fill="none" stroke="url(#ringGradient)" stroke-width="9"/>
+      <!-- anello interno scuro -->
+      <circle cx="0" cy="0" r="36" fill="url(#innerCircle)" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+      <!-- testo grade -->
+      <text x="0" y="6"
+            text-anchor="middle"
+            font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+            font-size="24"
+            letter-spacing="4"
+            fill="#f5f7ff">
+        ${grade}
+      </text>
+    </g>
+  </svg>`;
+  }
+  
 
 async function main() {
   console.log(`Generating stats for ${username}...`);
